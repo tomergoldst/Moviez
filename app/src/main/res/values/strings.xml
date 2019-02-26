@@ -1,0 +1,8 @@
+<resources>
+    <string name="themoviedb_api_key" translatable="false">YOUR_THEMOVIEDB_API_KEY_HERE</string>
+
+    <string name="app_name">Moviez</string>
+    <string name="loading">Loading…</string>
+    <string name="average_rating_out_of">%1$s / %2$s</string>
+
+</resources>
