@@ -24,7 +24,7 @@ class MainActivity : AppCompatActivity(), MainFragment.OnFragmentInteraction{
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(com.tomergoldst.moviez.R.layout.activity_main)
+        setContentView(R.layout.activity_main)
 
         initToolbar()
 
@@ -48,7 +48,7 @@ class MainActivity : AppCompatActivity(), MainFragment.OnFragmentInteraction{
     private fun addMainFragment() {
         supportFragmentManager
             .beginTransaction()
-            .add(com.tomergoldst.moviez.R.id.container, MainFragment.newInstance(), "MainFragment")
+            .add(R.id.container, MainFragment.newInstance(), "MainFragment")
             .commit()
 
     }
@@ -56,7 +56,7 @@ class MainActivity : AppCompatActivity(), MainFragment.OnFragmentInteraction{
     private fun addMovieDetailsFragment() {
         supportFragmentManager
             .beginTransaction()
-            .add(com.tomergoldst.moviez.R.id.container, MovieDetailsFragment.newInstance(), "MovieDetailsFragment")
+            .add(R.id.container, MovieDetailsFragment.newInstance(), "MovieDetailsFragment")
             .addToBackStack(null)
             .commit()
 
@@ -65,7 +65,7 @@ class MainActivity : AppCompatActivity(), MainFragment.OnFragmentInteraction{
     private fun addMovieDetailsFragmentToSecondaryContainer() {
         supportFragmentManager
             .beginTransaction()
-            .add(com.tomergoldst.moviez.R.id.secondaryContainer, MovieDetailsFragment.newInstance(), "MovieDetailsFragment")
+            .add(R.id.secondaryContainer, MovieDetailsFragment.newInstance(), "MovieDetailsFragment")
             .commit()
 
     }
@@ -73,7 +73,7 @@ class MainActivity : AppCompatActivity(), MainFragment.OnFragmentInteraction{
     private fun initToolbar() {
         setSupportActionBar(toolbar)
         val ab = supportActionBar!!
-        ab.title = getString(com.tomergoldst.moviez.R.string.app_name)
+        ab.title = getString(R.string.app_name)
     }
 
     override fun onMovieClicked(movie: Movie) {
