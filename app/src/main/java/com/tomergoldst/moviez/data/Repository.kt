@@ -1,7 +1,9 @@
 package com.tomergoldst.moviez.data
 
+import com.tomergoldst.moviez.data.local.LocalDataSource
 import com.tomergoldst.moviez.data.local.MoviesLocalDataSource
 import com.tomergoldst.moviez.data.remote.MoviesRemoteDataSource
+import com.tomergoldst.moviez.data.remote.RemoteDataSource
 import com.tomergoldst.moviez.model.Movie
 
 class Repository private constructor(
@@ -28,7 +30,7 @@ class Repository private constructor(
     }
 
     override fun getMovies(queryParams: Map<String, String>, callback: DataSource.LoadMoviesCallback) {
-        moviesRemoteDataSource.getMovies(queryParams, object : DataSource.LoadMoviesCallback{
+        moviesRemoteDataSource.getMovies(queryParams, object : RemoteDataSource.LoadMoviesCallback{
             override fun onMoviesLoaded(movies: List<Movie>) {
                 moviesLocalDataSource.saveMovies(movies)
 
@@ -36,7 +38,7 @@ class Repository private constructor(
             }
 
             override fun onDataNotAvailable() {
-                moviesLocalDataSource.getMovies(queryParams, object : DataSource.LoadMoviesCallback{
+                moviesLocalDataSource.getMovies(queryParams, object : LocalDataSource.LoadMoviesCallback{
                     override fun onMoviesLoaded(movies: List<Movie>) {
                         callback.onMoviesLoaded(movies)
                     }

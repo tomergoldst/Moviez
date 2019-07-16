@@ -7,11 +7,11 @@ import com.tomergoldst.moviez.model.Movie
 
 class MoviesLocalDataSource(private val appExecutors: AppExecutors,
                             private val movieDao: MovieDao
-) : DataSource {
+) : LocalDataSource {
 
     override fun getMovies(
         queryParams: Map<String, String>,
-        callback: DataSource.LoadMoviesCallback
+        callback: LocalDataSource.LoadMoviesCallback
     ){
         appExecutors.diskIO.execute {
             val page = queryParams.getValue(Constants.PAGE).toInt()
@@ -35,7 +35,7 @@ class MoviesLocalDataSource(private val appExecutors: AppExecutors,
         }
     }
 
-    override fun getMovieDetails(id: Long, callback: DataSource.LoadMovieCallback) {
+    override fun getMovieDetails(id: Long, callback: LocalDataSource.LoadMovieCallback) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 

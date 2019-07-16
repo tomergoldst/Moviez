@@ -1,18 +1,16 @@
 package com.tomergoldst.moviez.data.remote
 
-import com.tomergoldst.moviez.data.DataSource
 import com.tomergoldst.moviez.model.DiscoverMoviesResponse
-import com.tomergoldst.moviez.model.Movie
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 class MoviesRemoteDataSource(private val discoverMoviesService: DiscoverMoviesService) :
-    DataSource {
+    RemoteDataSource {
 
     override fun getMovies(
         queryParams: Map<String, String>,
-        callback: DataSource.LoadMoviesCallback
+        callback: RemoteDataSource.LoadMoviesCallback
     ){
         discoverMoviesService.discoverMovies(queryParams).enqueue(object : Callback<DiscoverMoviesResponse> {
             override fun onFailure(call: Call<DiscoverMoviesResponse>, t: Throwable) {
@@ -33,16 +31,8 @@ class MoviesRemoteDataSource(private val discoverMoviesService: DiscoverMoviesSe
 
     }
 
-    override fun saveMovies(movies: List<Movie>) {
-        // no use for remote data source in this sample app
-    }
-
-    override fun getMovieDetails(id: Long, callback: DataSource.LoadMovieCallback) {
+    override fun getMovieDetails(id: Long, callback: RemoteDataSource.LoadMovieCallback) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun clear() {
-        // no use for remote data source in this sample app
     }
 
 }
