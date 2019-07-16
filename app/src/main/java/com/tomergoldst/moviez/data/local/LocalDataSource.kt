@@ -1,25 +1,17 @@
 package com.tomergoldst.moviez.data.local
 
 import com.tomergoldst.moviez.model.Movie
+import io.reactivex.Completable
+import io.reactivex.Observable
 
 interface LocalDataSource {
 
-    interface LoadMoviesCallback {
-        fun onMoviesLoaded(movies: List<Movie>)
-        fun onDataNotAvailable()
-    }
+    fun getMovies(queryParams: Map<String, String>) : Observable<List<Movie>>
 
-    interface LoadMovieCallback {
-        fun onMovieLoaded(movie: Movie)
-        fun onDataNotAvailable()
-    }
+    fun saveMovies(movies: List<Movie>): Completable
 
-    fun getMovies(queryParams: Map<String, String>, callback: LoadMoviesCallback)
+    fun getMovieDetails(id: Long) : Observable<Movie>
 
-    fun saveMovies(movies: List<Movie>)
-
-    fun getMovieDetails(id: Long, callback: LoadMovieCallback)
-
-    fun clear()
+    fun clear(): Completable
 
 }

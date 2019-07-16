@@ -5,6 +5,8 @@ import com.tomergoldst.moviez.data.remote.MoviesRemoteDataSource
 import com.tomergoldst.moviez.model.Movie
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.observers.DisposableCompletableObserver
+import io.reactivex.observers.DisposableObserver
 import io.reactivex.observers.DisposableSingleObserver
 import io.reactivex.schedulers.Schedulers
 
@@ -23,12 +25,41 @@ class Repository private constructor(
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(object : DisposableSingleObserver<List<Movie>>() {
                     override fun onSuccess(movies: List<Movie>) {
-                        moviesLocalDataSource.saveMovies(movies)
-                        callback.onMoviesLoaded(movies)
+                        mCompositeDisposable.add(
+                            moviesLocalDataSource.saveMovies(movies)
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribeWith(object : DisposableCompletableObserver() {
+                                    override fun onComplete() {
+                                        callback.onMoviesLoaded(movies)
+                                    }
+
+                                    override fun onError(e: Throwable) {
+                                        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                                    }
+                                })
+                        )
                     }
 
                     override fun onError(e: Throwable) {
-                        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                        mCompositeDisposable.add(
+                            moviesLocalDataSource.getMovies(queryParams)
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribeWith(object : DisposableObserver<List<Movie>>() {
+                                    override fun onComplete() {
+                                        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                                    }
+
+                                    override fun onNext(movies: List<Movie>) {
+                                        callback.onMoviesLoaded(movies)
+                                    }
+
+                                    override fun onError(e: Throwable) {
+                                        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                                    }
+                                })
+                        )
                     }
                 })
         )

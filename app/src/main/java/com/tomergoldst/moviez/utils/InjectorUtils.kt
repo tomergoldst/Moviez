@@ -30,7 +30,7 @@ object InjectorUtils {
         val database = DatabaseAccessPoint.getDatabase(context)
 
         return Repository.getInstance(
-            MoviesLocalDataSource.getInstance(getAppExecutors(), database.movieDao()),
+            MoviesLocalDataSource.getInstance(database.movieDao()),
             MoviesRemoteDataSource(discoverMoviesService)
         )
     }
