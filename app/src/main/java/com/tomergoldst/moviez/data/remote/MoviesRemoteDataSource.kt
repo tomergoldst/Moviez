@@ -1,37 +1,16 @@
 package com.tomergoldst.moviez.data.remote
 
-import com.tomergoldst.moviez.model.DiscoverMoviesResponse
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import com.tomergoldst.moviez.model.Movie
+import io.reactivex.Single
 
 class MoviesRemoteDataSource(private val discoverMoviesService: DiscoverMoviesService) :
     RemoteDataSource {
 
-    override fun getMovies(
-        queryParams: Map<String, String>,
-        callback: RemoteDataSource.LoadMoviesCallback
-    ){
-        discoverMoviesService.discoverMovies(queryParams).enqueue(object : Callback<DiscoverMoviesResponse> {
-            override fun onFailure(call: Call<DiscoverMoviesResponse>, t: Throwable) {
-                callback.onDataNotAvailable()
-            }
-
-            override fun onResponse(
-                call: Call<DiscoverMoviesResponse>,
-                response: Response<DiscoverMoviesResponse>
-            ) {
-                if (response.isSuccessful) {
-                    callback.onMoviesLoaded(response.body()?.results!!)
-                } else {
-                    callback.onDataNotAvailable()
-                }
-            }
-        })
-
+    override fun getMovies(queryParams: Map<String, String>): Single<List<Movie>> {
+        return discoverMoviesService.discoverMovies(queryParams).map { r -> r.results }
     }
 
-    override fun getMovieDetails(id: Long, callback: RemoteDataSource.LoadMovieCallback) {
+    override fun getMovieDetails(id: Long): Single<Movie> {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 

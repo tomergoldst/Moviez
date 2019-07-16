@@ -1,6 +1,5 @@
 package com.tomergoldst.moviez.data.local
 
-import com.tomergoldst.moviez.data.DataSource
 import com.tomergoldst.moviez.data.remote.Constants
 import com.tomergoldst.moviez.utils.AppExecutors
 import com.tomergoldst.moviez.model.Movie

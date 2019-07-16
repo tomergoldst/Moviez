@@ -5,7 +5,7 @@ import android.content.Context
 import com.tomergoldst.moviez.data.local.DatabaseAccessPoint
 import com.tomergoldst.moviez.data.local.MoviesLocalDataSource
 import com.tomergoldst.moviez.data.remote.MoviesRemoteDataSource
-import com.tomergoldst.moviez.data.Repository
+import com.tomergoldst.moviez.data.repository.Repository
 import com.tomergoldst.moviez.data.remote.DiscoverMoviesService
 import com.tomergoldst.moviez.data.remote.RetrofitClient
 import com.tomergoldst.moviez.ui.MainViewModelProvider

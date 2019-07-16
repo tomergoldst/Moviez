@@ -1,8 +1,8 @@
-package com.tomergoldst.moviez.data
+package com.tomergoldst.moviez.data.repository
 
 import com.tomergoldst.moviez.model.Movie
 
-interface DataSource {
+interface RepositoryDataSource {
 
     interface LoadMoviesCallback {
         fun onMoviesLoaded(movies: List<Movie>)

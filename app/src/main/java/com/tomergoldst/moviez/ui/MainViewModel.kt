@@ -4,7 +4,7 @@ import android.app.Application
 import android.content.Context
 import androidx.lifecycle.*
 import com.tomergoldst.moviez.R
-import com.tomergoldst.moviez.data.DataSource
+import com.tomergoldst.moviez.data.repository.RepositoryDataSource
 import com.tomergoldst.moviez.model.Movie
 import com.tomergoldst.moviez.data.remote.Constants
 import java.lang.RuntimeException
@@ -12,7 +12,7 @@ import java.util.*
 
 class MainViewModel(
     application: Application,
-    private val repository: DataSource
+    private val repository: RepositoryDataSource
 ) :
     AndroidViewModel(application) {
 
@@ -39,7 +39,7 @@ class MainViewModel(
     }
 
     private fun discoverMovies() {
-        repository.getMovies(getQueryParams(), object : DataSource.LoadMoviesCallback{
+        repository.getMovies(getQueryParams(), object : RepositoryDataSource.LoadMoviesCallback{
             override fun onMoviesLoaded(movies: List<Movie>) {
                 val newMovies: MutableList<Movie> = ArrayList()
                 mMovies.value?.let {
