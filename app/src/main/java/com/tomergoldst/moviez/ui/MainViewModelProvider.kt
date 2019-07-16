@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.tomergoldst.moviez.data.DataSource
 
+@Suppress("UNCHECKED_CAST")
 class MainViewModelProvider(private val application: Application,
                             private val repository: DataSource) : ViewModelProvider.Factory {
 
