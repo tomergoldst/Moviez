@@ -2,11 +2,16 @@ package com.tomergoldst.moviez.ui
 
 import android.app.Application
 import android.content.Context
-import androidx.lifecycle.*
-import com.tomergoldst.moviez.R
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.tomergoldst.moviez.data.repository.RepositoryDataSource
 import com.tomergoldst.moviez.model.Movie
-import com.tomergoldst.moviez.data.remote.Constants
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.observers.DisposableObserver
+import io.reactivex.schedulers.Schedulers
+import timber.log.Timber
 import java.lang.RuntimeException
 import java.util.*
 
@@ -22,16 +27,18 @@ class MainViewModel(
     val selectedMovieOverview: MutableLiveData<String> = MutableLiveData()
 
     val selectedMoviePosterPath: MutableLiveData<String> = MutableLiveData()
-    val selectedMovieBackdropPath: MutableLiveData<String> = MutableLiveData()
+    val selectedMovieBackdropPath: MutableLiveData<String?> = MutableLiveData()
     val selectedMovieAvgRating: MutableLiveData<Float> = MutableLiveData()
     val selectedMovieReleaseDate: MutableLiveData<Date> = MutableLiveData()
 
     private val _dataLoading = MutableLiveData<Boolean>()
     val dataLoading: LiveData<Boolean>
-        get() =_dataLoading
+        get() = _dataLoading
 
     private var mPage = 1
     private val mContext: Context = getApplication()
+
+    private val mCompositeDisposable = CompositeDisposable()
 
     init {
         _dataLoading.value = true
@@ -39,55 +46,58 @@ class MainViewModel(
     }
 
     private fun discoverMovies() {
-        repository.getMovies(getQueryParams(), object : RepositoryDataSource.LoadMoviesCallback{
-            override fun onMoviesLoaded(movies: List<Movie>) {
-                val newMovies: MutableList<Movie> = ArrayList()
-                mMovies.value?.let {
-                    newMovies.addAll(it)
-                }
-                newMovies.addAll(movies)
-                mMovies.value = newMovies
+        mCompositeDisposable.add(
+            repository.getMovies(mPage)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(object : DisposableObserver<List<Movie>>() {
+                    override fun onComplete() {
 
-                // select first movie on list to load its details on init
-                if (_dataLoading.value == true) {
-                    selectMovie(newMovies[0].id)
-                    _dataLoading.value = false
-                }
+                    }
 
-            }
+                    override fun onNext(movies: List<Movie>) {
+                        if (movies.isEmpty()){
+                            return
+                        }
 
-            override fun onDataNotAvailable() {
-                _dataLoading.value = false
+                        val newMovies: MutableList<Movie> = ArrayList()
 
-            }
-        })
+                        // add existing movies to list
+                        mMovies.value?.let {
+                            newMovies.addAll(it)
+                        }
+                        // add new received movies to list
+                        newMovies.addAll(movies)
+                        mMovies.value = newMovies
 
-    }
+                        // select first movie on list to load its details on init
+                        if (_dataLoading.value == true) {
+                            selectMovie(newMovies[0].id)
+                            _dataLoading.value = false
+                        }
+                    }
 
-    private fun getQueryParams(): MutableMap<String, String> {
-        val queryParams: MutableMap<String, String> = HashMap()
-        queryParams[Constants.API_KEY] = mContext.getString(R.string.themoviedb_api_key)
-        queryParams[Constants.LANGUAGE] = Locale.getDefault().toLanguageTag()
-        queryParams[Constants.INCLUDE_ADULT] = false.toString()
-        queryParams[Constants.INCLUDE_VIDEO] = false.toString()
-        queryParams[Constants.SORT_BY] = "popularity.desc"
-        queryParams[Constants.PAGE] = mPage.toString()
-        return queryParams
+                    override fun onError(e: Throwable) {
+                        _dataLoading.value = false
+                        Timber.e(e)
+                    }
+                })
+        )
     }
 
     fun getMovies(): LiveData<MutableList<Movie>> {
         return mMovies
     }
 
-    fun getMoreMovies(){
+    fun getMoreMovies() {
         mPage++
         discoverMovies()
     }
 
-    fun selectMovie(id: Long){
+    fun selectMovie(id: Long) {
         // todo this not efficient
-        for (movie in mMovies.value!!){
-            if (movie.id == id){
+        for (movie in mMovies.value!!) {
+            if (movie.id == id) {
                 selectedMovieBackdropPath.value = movie.backdropPath
                 selectedMoviePosterPath.value = movie.posterPath
                 selectedMovieTitle.value = movie.title
@@ -102,4 +112,8 @@ class MainViewModel(
 
     }
 
+    override fun onCleared() {
+        super.onCleared()
+        mCompositeDisposable.dispose()
+    }
 }

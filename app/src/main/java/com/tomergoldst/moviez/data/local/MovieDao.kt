@@ -21,18 +21,18 @@ interface MovieDao {
     fun getSync(id: Long): Movie
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(movie: Movie): Completable
+    fun insert(movie: Movie)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(movies: List<Movie>): Completable
+    fun insert(movies: List<Movie>)
 
     @Update
-    fun update(movie: Movie): Completable
+    fun update(movie: Movie)
 
     @Delete
-    fun delete(movie: Movie): Completable
+    fun delete(movie: Movie)
 
     @Query("DELETE FROM movie")
-    fun deleteAll(): Completable
+    fun deleteAll()
 
 }

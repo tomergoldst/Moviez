@@ -6,7 +6,7 @@ import io.reactivex.Observable
 
 interface LocalDataSource {
 
-    fun getMovies(queryParams: Map<String, String>) : Observable<List<Movie>>
+    fun getMovies(page: Int) : Observable<List<Movie>>
 
     fun saveMovies(movies: List<Movie>): Completable
 

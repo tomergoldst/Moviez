@@ -3,73 +3,51 @@ package com.tomergoldst.moviez.data.repository
 import com.tomergoldst.moviez.data.local.MoviesLocalDataSource
 import com.tomergoldst.moviez.data.remote.MoviesRemoteDataSource
 import com.tomergoldst.moviez.model.Movie
+import io.reactivex.Completable
+import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.observers.DisposableCompletableObserver
-import io.reactivex.observers.DisposableObserver
 import io.reactivex.observers.DisposableSingleObserver
 import io.reactivex.schedulers.Schedulers
+import timber.log.Timber
 
 class Repository private constructor(
     private val moviesLocalDataSource: MoviesLocalDataSource,
     private val moviesRemoteDataSource: MoviesRemoteDataSource
 ) : RepositoryDataSource {
 
-    // todo: add clear disposable
     private val mCompositeDisposable = CompositeDisposable()
 
-    override fun getMovies(queryParams: Map<String, String>, callback: RepositoryDataSource.LoadMoviesCallback) {
+    override fun getMovies(page: Int): Observable<List<Movie>> {
+        val moviesObservable = moviesLocalDataSource.getMovies(page)
+
         mCompositeDisposable.add(
-            moviesRemoteDataSource.getMovies(queryParams)
+            moviesRemoteDataSource.getMovies(page)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(object : DisposableSingleObserver<List<Movie>>() {
                     override fun onSuccess(movies: List<Movie>) {
-                        mCompositeDisposable.add(
-                            moviesLocalDataSource.saveMovies(movies)
-                                .subscribeOn(Schedulers.io())
-                                .observeOn(AndroidSchedulers.mainThread())
-                                .subscribeWith(object : DisposableCompletableObserver() {
-                                    override fun onComplete() {
-                                        callback.onMoviesLoaded(movies)
-                                    }
-
-                                    override fun onError(e: Throwable) {
-                                        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-                                    }
-                                })
-                        )
+                        moviesLocalDataSource.saveMovies(movies)
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .doOnError{throwable -> Timber.e(throwable)}
+                            .subscribe()
                     }
 
                     override fun onError(e: Throwable) {
-                        mCompositeDisposable.add(
-                            moviesLocalDataSource.getMovies(queryParams)
-                                .subscribeOn(Schedulers.io())
-                                .observeOn(AndroidSchedulers.mainThread())
-                                .subscribeWith(object : DisposableObserver<List<Movie>>() {
-                                    override fun onComplete() {
-                                        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-                                    }
-
-                                    override fun onNext(movies: List<Movie>) {
-                                        callback.onMoviesLoaded(movies)
-                                    }
-
-                                    override fun onError(e: Throwable) {
-                                        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-                                    }
-                                })
-                        )
+                        Timber.e(e)
                     }
                 })
         )
+
+        return moviesObservable
     }
 
-    override fun saveMovies(movies: List<Movie>) {
+    override fun getMovieDetails(id: Long): Observable<Movie> {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun getMovieDetails(id: Long, callback: RepositoryDataSource.LoadMovieCallback) {
+    override fun saveMovies(movies: List<Movie>): Completable {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
@@ -77,6 +55,9 @@ class Repository private constructor(
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
+    override fun onDestroy() {
+        mCompositeDisposable.dispose()
+    }
 
     companion object {
 

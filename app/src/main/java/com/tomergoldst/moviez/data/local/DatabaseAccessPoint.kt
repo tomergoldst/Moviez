@@ -7,9 +7,11 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.tomergoldst.moviez.model.Movie
 
-@Database(entities = [Movie::class],
+@Database(
+    entities = [Movie::class],
     version = 1,
-    exportSchema = false)
+    exportSchema = false
+)
 @TypeConverters(Converters::class)
 internal abstract class DatabaseAccessPoint : RoomDatabase() {
 
@@ -31,12 +33,14 @@ internal abstract class DatabaseAccessPoint : RoomDatabase() {
                             DatabaseAccessPoint::class.java,
                             DATABASE_NAME
                         )
+                            .fallbackToDestructiveMigration()
                             .build()
                     }
                 }
             }
             return sInstance!!
         }
+
     }
 
 }

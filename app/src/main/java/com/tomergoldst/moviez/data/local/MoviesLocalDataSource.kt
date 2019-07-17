@@ -9,8 +9,7 @@ class MoviesLocalDataSource(
     private val movieDao: MovieDao
 ) : LocalDataSource {
 
-    override fun getMovies(queryParams: Map<String, String>): Observable<List<Movie>> {
-        val page = queryParams.getValue(Constants.PAGE).toInt()
+    override fun getMovies(page: Int): Observable<List<Movie>> {
         return movieDao.getAll((page - 1) * Constants.MOVIES_PER_PAGE, Constants.MOVIES_PER_PAGE)
     }
 
@@ -19,7 +18,7 @@ class MoviesLocalDataSource(
     }
 
     override fun saveMovies(movies: List<Movie>): Completable {
-        return Completable.fromAction { movieDao.insert(movies) }
+        return Completable.fromAction {movieDao.insert(movies)}
     }
 
     override fun clear(): Completable {
