@@ -40,9 +40,6 @@ class MainActivity : AppCompatActivity(), MainFragment.OnFragmentInteraction{
             setDisplayHomeIndicator(savedInstanceState.getBoolean(SAVED_STATE_HOME_INDICATOR))
         }
 
-        if (getString(R.string.themoviedb_api_key) == "YOUR_THEMOVIEDB_API_KEY_HERE"){
-            Snackbar.make(rootLayout, "Missing themoviedb api key", Snackbar.LENGTH_LONG).show()
-        }
     }
 
     private fun addMainFragment() {

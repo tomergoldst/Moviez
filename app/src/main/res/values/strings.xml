@@ -1,6 +1,4 @@
 <resources>
-    <!--<string name="themoviedb_api_key" translatable="false">YOUR_THEMOVIEDB_API_KEY_HERE</string>-->
-    <string name="themoviedb_api_key" translatable="false">91e6219a342912805a925299e835af28</string>
 
     <string name="app_name">Moviez</string>
     <string name="loading">Loading…</string>
