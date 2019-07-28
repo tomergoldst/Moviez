@@ -29,7 +29,6 @@ class Repository private constructor(
                     override fun onSuccess(movies: List<Movie>) {
                         moviesLocalDataSource.saveMovies(movies)
                             .subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread())
                             .doOnError{throwable -> Timber.e(throwable)}
                             .subscribe()
                     }
@@ -55,8 +54,9 @@ class Repository private constructor(
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun onDestroy() {
+    override fun destroy() {
         mCompositeDisposable.dispose()
+        INSTANCE = null
     }
 
     companion object {

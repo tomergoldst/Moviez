@@ -14,6 +14,6 @@ interface RepositoryDataSource {
 
     fun clear()
 
-    fun onDestroy()
+    fun destroy()
 
 }

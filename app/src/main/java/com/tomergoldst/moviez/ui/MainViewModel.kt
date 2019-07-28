@@ -115,5 +115,6 @@ class MainViewModel(
     override fun onCleared() {
         super.onCleared()
         mCompositeDisposable.dispose()
+        repository.destroy()
     }
 }
