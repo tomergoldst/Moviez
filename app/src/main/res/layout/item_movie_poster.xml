@@ -13,4 +13,23 @@
         android:scaleType="centerCrop"
         tools:src="@tools:sample/backgrounds/scenic" />
 
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/movieIdTxv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/holo_red_dark"
+        android:padding="4dp"
+        android:textColor="@android:color/white"
+        tools:text="236389" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/moviePopularityTxv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/holo_orange_dark"
+        android:layout_marginTop="32dp"
+        android:padding="4dp"
+        android:textColor="@android:color/white"
+        tools:text="87.56" />
+
 </FrameLayout>

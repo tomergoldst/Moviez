@@ -9,11 +9,12 @@ import com.tomergoldst.moviez.data.repository.RepositoryDataSource
 import com.tomergoldst.moviez.model.Movie
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.observers.DisposableObserver
-import io.reactivex.schedulers.Schedulers
+import io.reactivex.subjects.PublishSubject
 import timber.log.Timber
 import java.lang.RuntimeException
 import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.LinkedHashMap
 
 class MainViewModel(
     application: Application,
@@ -21,7 +22,9 @@ class MainViewModel(
 ) :
     AndroidViewModel(application) {
 
-    private val mMovies: MutableLiveData<MutableList<Movie>> = MutableLiveData()
+    private val mMovies: MutableLiveData<List<Movie>> = MutableLiveData()
+    private val mMoviesMap: MutableMap<Int, List<Movie>> = LinkedHashMap()
+
     val selectedMovieTitle: MutableLiveData<String> = MutableLiveData()
 
     val selectedMovieOverview: MutableLiveData<String> = MutableLiveData()
@@ -39,59 +42,61 @@ class MainViewModel(
     private val mContext: Context = getApplication()
 
     private val mCompositeDisposable = CompositeDisposable()
+    private val paginator: PublishSubject<Int> = PublishSubject.create()
 
     init {
+        mMovies.value = ArrayList()
         _dataLoading.value = true
-        discoverMovies()
+        subscribeForData()
     }
 
-    private fun discoverMovies() {
+    private fun subscribeForData() {
         mCompositeDisposable.add(
-            repository.getMovies(mPage)
-                .subscribeOn(Schedulers.io())
+            paginator
+                .doOnNext { page -> Timber.d("page $page") }
+                .flatMap { page -> repository.getMovies(page) }
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(object : DisposableObserver<List<Movie>>() {
-                    override fun onComplete() {
-
-                    }
-
-                    override fun onNext(movies: List<Movie>) {
-                        if (movies.isEmpty()){
-                            return
-                        }
-
-                        val newMovies: MutableList<Movie> = ArrayList()
-
-                        // add existing movies to list
-                        mMovies.value?.let {
-                            newMovies.addAll(it)
-                        }
-                        // add new received movies to list
-                        newMovies.addAll(movies)
-                        mMovies.value = newMovies
-
-                        // select first movie on list to load its details on init
-                        if (_dataLoading.value == true) {
-                            selectMovie(newMovies[0].id)
-                            _dataLoading.value = false
-                        }
-                    }
-
-                    override fun onError(e: Throwable) {
-                        _dataLoading.value = false
-                        Timber.e(e)
-                    }
-                })
+                .subscribe(this::updateData, this::onError)
         )
+
+        paginator.onNext(mPage)
     }
 
-    fun getMovies(): LiveData<MutableList<Movie>> {
+    private fun updateData(movies: List<Movie>){
+        Timber.d("updateData")
+
+        if (!movies.isNullOrEmpty()) {
+            mMoviesMap[mPage] = movies
+            mMovies.value = getMoviesListFromMap()
+
+            // select first movie on list to load its details on init
+            if (_dataLoading.value == true) {
+                selectMovie(movies[0].id)
+                _dataLoading.value = false
+            }
+        }
+    }
+
+    private fun onError(e: Throwable){
+        Timber.e(e)
+    }
+
+    private fun getMoviesListFromMap(): List<Movie> {
+        val movies = ArrayList<Movie>()
+        for (moviesList in mMoviesMap) {
+            movies.addAll(moviesList.value)
+        }
+        return movies
+    }
+
+    fun getMovies(): LiveData<List<Movie>> {
         return mMovies
     }
 
     fun getMoreMovies() {
         mPage++
-        discoverMovies()
+        //discoverMovies()
+        paginator.onNext(mPage)
     }
 
     fun selectMovie(id: Long) {

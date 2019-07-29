@@ -29,7 +29,7 @@ class MainFragment : Fragment(),
     }
 
     // Container Activity must implement this interface
-    interface OnFragmentInteraction{
+    interface OnFragmentInteraction {
         fun onMovieClicked(movie: Movie)
     }
 

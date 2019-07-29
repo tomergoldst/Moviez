@@ -5,7 +5,6 @@ import com.tomergoldst.moviez.data.remote.MoviesRemoteDataSource
 import com.tomergoldst.moviez.model.Movie
 import io.reactivex.Completable
 import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.observers.DisposableSingleObserver
 import io.reactivex.schedulers.Schedulers
@@ -19,27 +18,26 @@ class Repository private constructor(
     private val mCompositeDisposable = CompositeDisposable()
 
     override fun getMovies(page: Int): Observable<List<Movie>> {
-        val moviesObservable = moviesLocalDataSource.getMovies(page)
+        // fetch data from remote and update local database on successful response
+        moviesRemoteDataSource.getMovies(page)
+            .subscribeOn(Schedulers.io())
+            .observeOn(Schedulers.io())
+            .subscribe(object : DisposableSingleObserver<List<Movie>>() {
+                override fun onSuccess(movies: List<Movie>) {
+                    moviesLocalDataSource.saveMovies(movies)
+                        .subscribeOn(Schedulers.io())
+                        .doOnError{throwable -> Timber.e(throwable)}
+                        .subscribe()
+                }
 
-        mCompositeDisposable.add(
-            moviesRemoteDataSource.getMovies(page)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(object : DisposableSingleObserver<List<Movie>>() {
-                    override fun onSuccess(movies: List<Movie>) {
-                        moviesLocalDataSource.saveMovies(movies)
-                            .subscribeOn(Schedulers.io())
-                            .doOnError{throwable -> Timber.e(throwable)}
-                            .subscribe()
-                    }
+                override fun onError(e: Throwable) {
+                    Timber.e(e)
+                }
+            })
 
-                    override fun onError(e: Throwable) {
-                        Timber.e(e)
-                    }
-                })
-        )
-
-        return moviesObservable
+        // always read from local database, when database is updated, the change will be reflected automatically
+        // due to using Observable object together with Room
+        return moviesLocalDataSource.getMovies(page)
     }
 
     override fun getMovieDetails(id: Long): Observable<Movie> {
