@@ -10,9 +10,9 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable
-import com.tomergoldst.moviez.BuildConfig
 import com.tomergoldst.moviez.R
-import com.tomergoldst.moviez.config.GlideApp
+import com.tomergoldst.moviez.app.Config
+import com.tomergoldst.moviez.app.GlideApp
 import com.tomergoldst.moviez.data.remote.Constants
 import com.tomergoldst.moviez.model.Movie
 
@@ -53,7 +53,8 @@ class MoviesPostersRecyclerListAdapter(
                     .into(moviePosterImv)
             }
 
-            if (BuildConfig.DEBUG) {
+            @Suppress("ConstantConditionIf")
+            if (Config.DEBUG) {
                 movieIdTxv.isVisible = true
                 movieIdTxv.text = movie.id.toString()
                 moviePopularityTxv.isVisible = true

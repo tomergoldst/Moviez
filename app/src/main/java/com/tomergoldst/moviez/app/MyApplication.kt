@@ -1,7 +1,8 @@
-package com.tomergoldst.moviez
+package com.tomergoldst.moviez.app
 
 import android.app.Application
 import com.facebook.stetho.Stetho
+import com.tomergoldst.moviez.BuildConfig
 import timber.log.Timber
 
 class MyApplication : Application() {

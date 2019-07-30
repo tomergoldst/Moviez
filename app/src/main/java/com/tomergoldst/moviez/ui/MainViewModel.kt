@@ -26,9 +26,7 @@ class MainViewModel(
     private val mMoviesMap: MutableMap<Int, List<Movie>> = LinkedHashMap()
 
     val selectedMovieTitle: MutableLiveData<String> = MutableLiveData()
-
     val selectedMovieOverview: MutableLiveData<String> = MutableLiveData()
-
     val selectedMoviePosterPath: MutableLiveData<String> = MutableLiveData()
     val selectedMovieBackdropPath: MutableLiveData<String?> = MutableLiveData()
     val selectedMovieAvgRating: MutableLiveData<Float> = MutableLiveData()
@@ -42,7 +40,7 @@ class MainViewModel(
     private val mContext: Context = getApplication()
 
     private val mCompositeDisposable = CompositeDisposable()
-    private val paginator: PublishSubject<Int> = PublishSubject.create()
+    private val pagination: PublishSubject<Int> = PublishSubject.create()
 
     init {
         mMovies.value = ArrayList()
@@ -52,14 +50,14 @@ class MainViewModel(
 
     private fun subscribeForData() {
         mCompositeDisposable.add(
-            paginator
+            pagination
                 .doOnNext { page -> Timber.d("page $page") }
                 .flatMap { page -> repository.getMovies(page) }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(this::updateData, this::onError)
         )
 
-        paginator.onNext(mPage)
+        pagination.onNext(mPage)
     }
 
     private fun updateData(movies: List<Movie>){
@@ -94,9 +92,7 @@ class MainViewModel(
     }
 
     fun getMoreMovies() {
-        mPage++
-        //discoverMovies()
-        paginator.onNext(mPage)
+        pagination.onNext(++mPage)
     }
 
     fun selectMovie(id: Long) {
@@ -120,6 +116,5 @@ class MainViewModel(
     override fun onCleared() {
         super.onCleared()
         mCompositeDisposable.dispose()
-        repository.destroy()
     }
 }

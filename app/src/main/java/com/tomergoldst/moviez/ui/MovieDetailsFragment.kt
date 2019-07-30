@@ -8,7 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable
-import com.tomergoldst.moviez.config.GlideApp
+import com.tomergoldst.moviez.app.GlideApp
 import com.tomergoldst.moviez.utils.InjectorUtils
 import kotlinx.android.synthetic.main.fragment_movie_details.*
 import kotlinx.android.synthetic.main.fragment_movie_details.view.*

@@ -14,6 +14,4 @@ interface RepositoryDataSource {
 
     fun clear()
 
-    fun destroy()
-
 }
