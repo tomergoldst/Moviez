@@ -2,5 +2,5 @@ package com.tomergoldst.moviez.app
 
 object Config {
 
-    const val DEBUG = true
+    const val DEBUG = false
 }
