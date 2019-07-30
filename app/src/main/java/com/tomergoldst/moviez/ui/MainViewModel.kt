@@ -27,22 +27,27 @@ class MainViewModel(
     private val _movies: MutableLiveData<List<Movie>> = MutableLiveData()
     val movies: LiveData<List<Movie>> = _movies
 
-    val selectedMovieTitle: MutableLiveData<String> = MutableLiveData()
-    val selectedMovieOverview: MutableLiveData<String> = MutableLiveData()
-    val selectedMoviePosterPath: MutableLiveData<String> = MutableLiveData()
-    val selectedMovieBackdropPath: MutableLiveData<String?> = MutableLiveData()
-    val selectedMovieAvgRating: MutableLiveData<Float> = MutableLiveData()
-    val selectedMovieReleaseDate: MutableLiveData<Date> = MutableLiveData()
+    private val _selectedMovieTitle: MutableLiveData<String> = MutableLiveData()
+    val selectedMovieTitle: LiveData<String> = _selectedMovieTitle
+    private val _selectedMovieOverview: MutableLiveData<String> = MutableLiveData()
+    val selectedMovieOverview: LiveData<String> = _selectedMovieOverview
+    private val _selectedMoviePosterPath: MutableLiveData<String> = MutableLiveData()
+    val selectedMoviePosterPath: LiveData<String> = _selectedMoviePosterPath
+    private val _selectedMovieBackdropPath: MutableLiveData<String?> = MutableLiveData()
+    val selectedMovieBackdropPath: LiveData<String?> = _selectedMovieBackdropPath
+    private val _selectedMovieAvgRating: MutableLiveData<Float> = MutableLiveData()
+    val selectedMovieAvgRating: LiveData<Float> = _selectedMovieAvgRating
+    private val _selectedMovieReleaseDate: MutableLiveData<Date> = MutableLiveData()
+    val selectedMovieReleaseDate: LiveData<Date> = _selectedMovieReleaseDate
 
     private val _dataLoading = MutableLiveData<Boolean>()
-    val dataLoading: LiveData<Boolean>
-        get() = _dataLoading
+    val dataLoading: LiveData<Boolean> = _dataLoading
 
     private var mPage = 1
     private val mContext: Context = getApplication()
 
     private val mCompositeDisposable = CompositeDisposable()
-    private val pagination: PublishSubject<Int> = PublishSubject.create()
+    private val mPagination: PublishSubject<Int> = PublishSubject.create()
 
     init {
         _movies.value = ArrayList()
@@ -52,14 +57,14 @@ class MainViewModel(
 
     private fun subscribeForData() {
         mCompositeDisposable.add(
-            pagination
+            mPagination
                 .doOnNext { page -> Timber.d("page $page") }
                 .flatMap { page -> repository.getMovies(page) }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(this::updateData, this::onError)
         )
 
-        pagination.onNext(mPage)
+        mPagination.onNext(mPage)
     }
 
     private fun updateData(movies: List<Movie>){
@@ -90,19 +95,19 @@ class MainViewModel(
     }
 
     fun getMoreMovies() {
-        pagination.onNext(++mPage)
+        mPagination.onNext(++mPage)
     }
 
     fun selectMovie(id: Long) {
         // todo this not efficient
         for (movie in _movies.value!!) {
             if (movie.id == id) {
-                selectedMovieBackdropPath.value = movie.backdropPath
-                selectedMoviePosterPath.value = movie.posterPath
-                selectedMovieTitle.value = movie.title
-                selectedMovieOverview.value = movie.overview
-                selectedMovieAvgRating.value = movie.voteAverage
-                selectedMovieReleaseDate.value = movie.releaseDate
+                _selectedMovieBackdropPath.value = movie.backdropPath
+                _selectedMoviePosterPath.value = movie.posterPath
+                _selectedMovieTitle.value = movie.title
+                _selectedMovieOverview.value = movie.overview
+                _selectedMovieAvgRating.value = movie.voteAverage
+                _selectedMovieReleaseDate.value = movie.releaseDate
                 return
             }
         }
