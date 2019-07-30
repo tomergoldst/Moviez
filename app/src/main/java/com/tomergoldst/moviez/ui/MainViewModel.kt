@@ -22,8 +22,10 @@ class MainViewModel(
 ) :
     AndroidViewModel(application) {
 
-    private val mMovies: MutableLiveData<List<Movie>> = MutableLiveData()
     private val mMoviesMap: MutableMap<Int, List<Movie>> = LinkedHashMap()
+
+    private val _movies: MutableLiveData<List<Movie>> = MutableLiveData()
+    val movies: LiveData<List<Movie>> = _movies
 
     val selectedMovieTitle: MutableLiveData<String> = MutableLiveData()
     val selectedMovieOverview: MutableLiveData<String> = MutableLiveData()
@@ -43,7 +45,7 @@ class MainViewModel(
     private val pagination: PublishSubject<Int> = PublishSubject.create()
 
     init {
-        mMovies.value = ArrayList()
+        _movies.value = ArrayList()
         _dataLoading.value = true
         subscribeForData()
     }
@@ -65,7 +67,7 @@ class MainViewModel(
 
         if (!movies.isNullOrEmpty()) {
             mMoviesMap[mPage] = movies
-            mMovies.value = getMoviesListFromMap()
+            _movies.value = getMoviesListFromMap()
 
             // select first movie on list to load its details on init
             if (_dataLoading.value == true) {
@@ -87,17 +89,13 @@ class MainViewModel(
         return movies
     }
 
-    fun getMovies(): LiveData<List<Movie>> {
-        return mMovies
-    }
-
     fun getMoreMovies() {
         pagination.onNext(++mPage)
     }
 
     fun selectMovie(id: Long) {
         // todo this not efficient
-        for (movie in mMovies.value!!) {
+        for (movie in _movies.value!!) {
             if (movie.id == id) {
                 selectedMovieBackdropPath.value = movie.backdropPath
                 selectedMoviePosterPath.value = movie.posterPath

@@ -41,7 +41,7 @@ class MainFragment : Fragment(),
                 .get(MainViewModel::class.java)
         } ?: throw Exception("Invalid Activity")
 
-        mModel.getMovies().observe(this, Observer {
+        mModel.movies.observe(this, Observer {
             if (!it.isNullOrEmpty()) {
                 mAdapter.submitList(it)
             }
