@@ -3,15 +3,6 @@ Discover popular movies
 
 <img src="https://user-images.githubusercontent.com/19874536/53399604-f93e0a80-39b4-11e9-8487-21de450aec34.png" width="180" height="360"/><img src="https://user-images.githubusercontent.com/19874536/53399605-f93e0a80-39b4-11e9-99e3-d7ea4216c828.png" width="180" height="360"/><img src="https://user-images.githubusercontent.com/19874536/53399607-f93e0a80-39b4-11e9-9fab-0cdfa8d85055.png" width="360" height="240"/>
 
-## Instructions
-Replace the string value of `themoviedb_api_key` with your THE MOVIE DB key for the app to work
-
-See https://www.themoviedb.org/documentation/api for more information
-
-```groovy
-<string name="themoviedb_api_key" translatable="false">YOUR_THEMOVIEDB_API_KEY_HERE</string>
-```
-
 ## Tech stack
 * Kotlin
 * MVVM
@@ -22,6 +13,7 @@ See https://www.themoviedb.org/documentation/api for more information
     * ViewModel
     * LiveData
 * Retrofit
+* RxJava
 * Glide
 * Gson
 
