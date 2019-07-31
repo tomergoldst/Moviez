@@ -2,6 +2,7 @@ package com.tomergoldst.moviez.data.remote
 
 import com.tomergoldst.moviez.model.Movie
 import io.reactivex.Single
+import timber.log.Timber
 import java.util.*
 
 class MoviesRemoteDataSource(private val moviesService: MoviesService) :
