@@ -1,16 +1,16 @@
 package com.tomergoldst.moviez.data.repository
 
-import com.tomergoldst.moviez.data.local.MoviesLocalDataSource
-import com.tomergoldst.moviez.data.remote.MoviesRemoteDataSource
+import com.tomergoldst.moviez.data.local.LocalDataSource
+import com.tomergoldst.moviez.data.remote.RemoteDataSource
 import com.tomergoldst.moviez.model.Movie
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 
-class Repository private constructor(
-    private val moviesLocalDataSource: MoviesLocalDataSource,
-    private val moviesRemoteDataSource: MoviesRemoteDataSource
+class Repository(
+    private val moviesLocalDataSource: LocalDataSource,
+    private val moviesRemoteDataSource: RemoteDataSource
 ) : RepositoryDataSource {
 
     override fun getMovies(page: Int): Observable<List<Movie>> {
@@ -44,25 +44,4 @@ class Repository private constructor(
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    companion object {
-
-        private val TAG = Repository::class.java.simpleName
-
-        @Volatile
-        private var INSTANCE: Repository? = null
-
-        fun getInstance(
-            moviesLocalDataSource: MoviesLocalDataSource,
-            moviesRemoteDataSource: MoviesRemoteDataSource
-        ):
-                Repository =
-            INSTANCE ?: synchronized(this) {
-                INSTANCE
-                    ?: Repository(
-                        moviesLocalDataSource,
-                        moviesRemoteDataSource
-                    ).also { INSTANCE = it }
-            }
-
-    }
 }

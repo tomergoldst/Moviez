@@ -66,6 +66,12 @@ dependencies {
     implementation "com.github.bumptech.glide:glide:$glideVersion"
     kapt "com.github.bumptech.glide:compiler:$glideVersion"
 
+    // Logger
     implementation 'com.jakewharton.timber:timber:4.7.1'
+
+    // Koin
+    implementation "org.koin:koin-core:2.0.1"
+    implementation "org.koin:koin-androidx-viewmodel:2.0.1"
+    testImplementation 'org.koin:koin-test:2.0.1'
 
 }

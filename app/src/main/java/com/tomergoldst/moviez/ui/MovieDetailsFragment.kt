@@ -9,30 +9,21 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.tomergoldst.moviez.app.GlideApp
-import com.tomergoldst.moviez.utils.InjectorUtils
 import kotlinx.android.synthetic.main.fragment_movie_details.*
 import kotlinx.android.synthetic.main.fragment_movie_details.view.*
 import java.util.*
 import com.tomergoldst.moviez.data.remote.Constants
+import org.koin.androidx.viewmodel.ext.android.sharedViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MovieDetailsFragment : Fragment() {
 
-    private lateinit var mModel: MainViewModel
+    private val mModel by sharedViewModel<MainViewModel>()
 
     companion object {
         val TAG: String = MovieDetailsFragment::class.java.simpleName
 
         fun newInstance() = MovieDetailsFragment()
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        mModel = activity?.run {
-            ViewModelProviders.of(this, InjectorUtils.getMainViewModelProvider(application))
-                .get(MainViewModel::class.java)
-        } ?: throw Exception("Invalid Activity")
-
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

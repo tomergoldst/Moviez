@@ -5,19 +5,20 @@ import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.tomergoldst.moviez.R
 import com.tomergoldst.moviez.model.Movie
-import com.tomergoldst.moviez.utils.InjectorUtils
 import com.tomergoldst.moviez.utils.UiUtils
 import kotlinx.android.synthetic.main.fragment_main.*
+import org.koin.androidx.viewmodel.ext.android.sharedViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainFragment : Fragment(),
     MoviesPostersRecyclerListAdapter.OnAdapterInteractionListener {
 
-    private lateinit var mModel: MainViewModel
+    private val mModel by sharedViewModel<MainViewModel>()
+
     private lateinit var mAdapter: MoviesPostersRecyclerListAdapter
     private var mListener: OnFragmentInteraction? = null
 
@@ -35,11 +36,6 @@ class MainFragment : Fragment(),
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        mModel = activity?.run {
-            ViewModelProviders.of(this, InjectorUtils.getMainViewModelProvider(application))
-                .get(MainViewModel::class.java)
-        } ?: throw Exception("Invalid Activity")
 
         mModel.movies.observe(this, Observer {
             if (!it.isNullOrEmpty()) {

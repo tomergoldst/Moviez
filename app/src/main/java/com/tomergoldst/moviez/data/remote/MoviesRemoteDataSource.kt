@@ -4,11 +4,11 @@ import com.tomergoldst.moviez.model.Movie
 import io.reactivex.Single
 import java.util.*
 
-class MoviesRemoteDataSource(private val discoverMoviesService: DiscoverMoviesService) :
+class MoviesRemoteDataSource(private val moviesService: MoviesService) :
     RemoteDataSource {
 
     override fun getMovies(page: Int): Single<List<Movie>> {
-        return discoverMoviesService.discoverMovies(getQueryParams(page))
+        return moviesService.discoverMovies(getQueryParams(page))
             .map { r -> r.results }
     }
 

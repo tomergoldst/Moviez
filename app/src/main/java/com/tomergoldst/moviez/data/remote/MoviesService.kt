@@ -5,7 +5,7 @@ import io.reactivex.Single
 import retrofit2.http.GET
 import retrofit2.http.QueryMap
 
-interface DiscoverMoviesService {
+interface MoviesService {
 
     @GET("discover/movie")
     fun discoverMovies(@QueryMap params: Map<String, String>): Single<DiscoverMoviesResponse>

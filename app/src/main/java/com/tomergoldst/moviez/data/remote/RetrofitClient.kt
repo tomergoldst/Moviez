@@ -38,4 +38,7 @@ object RetrofitClient {
             .build()
     }
 
+    fun getMoviesService(): MoviesService = retrofit!!.create(MoviesService::class.java)
+
+
 }

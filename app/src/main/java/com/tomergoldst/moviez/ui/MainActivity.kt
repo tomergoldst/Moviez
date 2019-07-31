@@ -3,7 +3,6 @@ package com.tomergoldst.moviez.ui
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
-import com.google.android.material.snackbar.Snackbar
 import com.tomergoldst.moviez.R
 import com.tomergoldst.moviez.model.Movie
 import com.tomergoldst.moviez.utils.UiUtils
